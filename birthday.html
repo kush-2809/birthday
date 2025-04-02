@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="images/cake.png" />
+    <title>Happy Birthday!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #ffebee;
+            color: #2fd363;
+            padding: 20px;
+            overflow-x: hidden; /* Prevent horizontal scroll from balloons */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rainbow 6s linear infinite;
+        }
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        h2 {
+            color: #e91e63;
+        }
+        .birthday-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .message {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        .message p:nth-child(1) {
+            color: #e91e63;
+        }
+        .message p:nth-child(2) {
+            color: #9c27b0;
+        }
+        .message p:nth-child(3) {
+            color: #3f51b5;
+        }
+        .signature {
+            font-style: italic;
+            margin-top: 30px;
+            color: #ff5722;
+        }
+        .gift-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #d32f2f;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .gift-link:hover {
+            background-color: #b71c1c;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        /* Hide the audio players but keep them functional */
+        .audio-player {
+            display: none;
+        }
+        p {
+            color: #673ab7;
+        }
+        
+        /* Balloon animation styles */
+        .balloon-container {
+            position: fixed;
+            bottom: -100px;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .balloon {
+            position: absolute;
+            bottom: 0;
+            width: 40px;
+            height: 60px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            animation: float-up 10s linear forwards;
+            opacity: 0;
+        }
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 15px;
+            background-color: #888;
+        }
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(20deg);
+                opacity: 0.2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio elements -->
+    <audio id="backgroundMusic" class="audio-player" loop>
+        <source src="images/happy-birthday-155461.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <audio id="birthdayRecording" class="audio-player">
+        <source src="images/record.aac" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <div class="balloon-container" id="balloonContainer"></div>
+    
+    <div class="container">
+        <h1>Happy Birthday!</h1>
+        <h2>Dear Shalini Tai,</h2>
+        
+        <img src="images/DSC_6751.JPG" 
+             alt="Birthday Cake" class="birthday-img">
+        
+        <div class="message"><b><i>
+            <p>Wishing you a day filled with happiness and a year filled with joy!</p>
+            <p>May all your dreams and wishes come true on this special day and throughout the coming year.</p>
+            <p>You deserve all the best things in life. Enjoy your special day to the fullest!</p></b></i>
+        </div>
+        
+        <img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+             alt="Celebration" class="birthday-img">
+        
+        <p>Here's a little something for you:</p>
+        <button id="giftButton" class="gift-link">Click for your gift!</button>
+        
+        <div class="signature">
+            <p>With love,</p>
+            <p>Rivansh & Bhavyam</p>
+        </div>
+    </div>
+
+    <script>
+        // Get audio elements
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const birthdayRecording = document.getElementById('birthdayRecording');
+        const balloonContainer = document.getElementById('balloonContainer');
+        const giftButton = document.getElementById('giftButton');
+        
+        // Play background music when page loads
+        window.addEventListener('load', function() {
+            backgroundMusic.play().catch(error => {
+                console.log("Autoplay prevented: ", error);
+                // Create a message to inform the user to interact with the page
+                const audioMessage = document.createElement('p');
+                audioMessage.textContent = 'Click anywhere to play music';
+                audioMessage.style.position = 'fixed';
+                audioMessage.style.top = '10px';
+                audioMessage.style.left = '50%';
+                audioMessage.style.transform = 'translateX(-50%)';
+                audioMessage.style.backgroundColor = 'rgba(0,0,0,0.7)';
+                audioMessage.style.color = 'white';
+                audioMessage.style.padding = '10px';
+                audioMessage.style.borderRadius = '5px';
+                audioMessage.style.zIndex = '1000';
+                document.body.appendChild(audioMessage);
+                
+                // Add event listener to the document
+                document.addEventListener('click', function initialClick() {
+                    backgroundMusic.play();
+                    document.body.removeChild(audioMessage);
+                    document.removeEventListener('click', initialClick);
+                }, { once: true });
+            });
+        });
+        
+        // Function to create a balloon
+        function createBalloon() {
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            
+            // Random position
+            const left = Math.random() * 100 + '%';
+            balloon.style.left = left;
+            
+            // Random color
+            const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#8b00ff', '#ff1493', '#00ffff'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            balloon.style.backgroundColor = randomColor;
+            
+            // Random size
+            const size = Math.random() * 30 + 30;
+            balloon.style.width = size + 'px';
+            balloon.style.height = size * 1.5 + 'px';
+            
+            // Random animation duration
+            const duration = Math.random() * 5 + 5;
+            balloon.style.animationDuration = duration + 's';
+            
+            // Remove balloon after animation completes
+            setTimeout(() => {
+                balloon.remove();
+            }, duration * 1000);
+            
+            return balloon;
+        }
+        
+        // Create balloons effect
+        function createBalloons() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const balloon = createBalloon();
+                    balloonContainer.appendChild(balloon);
+                }, i * 200); // Stagger the balloons
+            }
+        }
+        
+        // Gift button click handler
+        giftButton.addEventListener('click', function() {
+            // Pause background music
+            backgroundMusic.pause();
+            
+            // Create balloons
+            createBalloons();
+            
+            // Play recording
+            birthdayRecording.play();
+            
+            // When recording ends, resume background music
+            birthdayRecording.addEventListener('ended', function() {
+                backgroundMusic.play();
+            });
+        });
+    </script>
+</body>
+</html>
